@@ -99,17 +99,39 @@ def main():
     p3 = os.path.join(a.out_dir, 'median_latency_bars.png')
     fig.tight_layout(); fig.savefig(p3, dpi=140); plt.close(fig)
 
-    # ---- PLOT 4: latency distributions overlaid ----
+    # ---- PLOT 4a: overlaid distributions on a LOG x-axis ----
+    # (linear x crams the fast GPU bars into a sliver near 0; log spreads them out)
+    import numpy as _np
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(df['coral_ms'], bins=50, alpha=0.5, color=C, label='Coral Edge TPU')
-    ax.hist(df['npu_ms'], bins=50, alpha=0.5, color=N, label='Ryzen AI NPU')
-    ax.hist(df['gpu_ms'], bins=50, alpha=0.5, color=G, label='RTX 4060 GPU')
-    ax.set_xlabel('Latency (ms)')
+    allmin = max(1e-3, min(df['coral_ms'].min(), df['npu_ms'].min(), df['gpu_ms'].min()))
+    allmax = max(df['coral_ms'].max(), df['npu_ms'].max(), df['gpu_ms'].max())
+    logbins = _np.logspace(_np.log10(allmin), _np.log10(allmax), 50)
+    ax.hist(df['coral_ms'], bins=logbins, alpha=0.5, color=C, label='Coral Edge TPU')
+    ax.hist(df['npu_ms'], bins=logbins, alpha=0.5, color=N, label='Ryzen AI NPU')
+    ax.hist(df['gpu_ms'], bins=logbins, alpha=0.5, color=G, label='RTX 4060 GPU')
+    ax.set_xscale('log')
+    ax.set_xlabel('Latency (ms, log scale)')
     ax.set_ylabel('Number of models')
-    ax.set_title('Latency distributions')
-    ax.legend(); ax.grid(True, alpha=0.25)
-    p4 = os.path.join(a.out_dir, 'latency_distributions.png')
+    ax.set_title('Latency distributions (log scale) -- all counts sum to n per accelerator')
+    ax.legend(); ax.grid(True, alpha=0.25, which='both')
+    p4 = os.path.join(a.out_dir, 'latency_distributions_log.png')
     fig.tight_layout(); fig.savefig(p4, dpi=140); plt.close(fig)
+
+    # ---- PLOT 4b: 3 separate panels, each on its OWN scale (clearest) ----
+    fig, axes = plt.subplots(3, 1, figsize=(9, 10))
+    for ax_i, (col, c, lab) in zip(axes,
+            [('coral_ms', C, 'Coral Edge TPU'), ('npu_ms', N, 'Ryzen AI NPU'),
+             ('gpu_ms', G, 'RTX 4060 GPU')]):
+        d = df[col]
+        ax_i.hist(d, bins=50, alpha=0.75, color=c)
+        ax_i.axvline(d.median(), color='k', linestyle='--', alpha=0.6,
+                     label=f'median {d.median():.3f}ms')
+        ax_i.set_title(f'{lab}  (n={len(d)}, each panel own scale)')
+        ax_i.set_xlabel('Latency (ms)')
+        ax_i.set_ylabel('Count')
+        ax_i.legend(); ax_i.grid(True, alpha=0.25)
+    p4b = os.path.join(a.out_dir, 'latency_distributions_panels.png')
+    fig.tight_layout(); fig.savefig(p4b, dpi=140); plt.close(fig)
 
     # ---- summary ----
     stats = os.path.join(a.out_dir, 'three_way_summary.txt')
@@ -140,7 +162,7 @@ def main():
             f.write(f'  {lab} fastest on {n}/{len(df)} models ({100*n/len(df):.0f}%)\n')
 
     print(f'\nWrote 4 plots + summary to {a.out_dir}/')
-    for p in [p1, p2, p3, p4, stats]:
+    for p in [p1, p2, p3, p4, p4b, stats]:
         print('  ', p)
 
 
