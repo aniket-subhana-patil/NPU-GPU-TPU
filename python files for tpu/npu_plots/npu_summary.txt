@@ -1,0 +1,12 @@
+Ryzen AI NPU -- NAS-Bench-101 latency summary
+=============================================
+
+Models timed: 987
+
+NPU latency (ms): median=5.130 mean=5.753 min=0.796 max=37.607
+
+By Coral cache residency:
+  cache-fit (n=648): NPU median 4.803ms
+  cache-overflow (n=339): NPU median 6.051ms
+
+Correlation NPU latency ~ params: 0.407

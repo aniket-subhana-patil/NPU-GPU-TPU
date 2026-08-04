@@ -1,0 +1,12 @@
+Edge TPU (Coral) vs Ryzen AI NPU -- latency comparison
+=======================================================
+
+Matched models: 0
+
+Coral Edge TPU latency (ms): median=nan mean=nan min=nan max=nan
+Ryzen AI NPU latency (ms): median=nan mean=nan min=nan max=nan
+
+Per-model speedup (Coral/NPU): median=nanx mean=nanx
+NPU faster on 0/0 models (nan%)
+
+By Coral cache residency:

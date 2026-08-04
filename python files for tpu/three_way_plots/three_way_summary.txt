@@ -1,0 +1,26 @@
+Three-way accelerator comparison -- NAS-Bench-101 (1000 architectures)
+====================================================================
+
+Models timed on all three: 987
+
+Coral Edge TPU (USB, int8):
+  median=1.468  mean=8.404  min=0.390  max=74.680 ms
+  correlation with params: 0.969
+
+Ryzen AI NPU (PCIe, int8):
+  median=5.130  mean=5.753  min=0.796  max=37.607 ms
+  correlation with params: 0.407
+
+RTX 4060 GPU (CUDA, int8 models):
+  median=2.475  mean=2.531  min=0.478  max=5.021 ms
+  correlation with params: 0.624
+
+Effect of Coral cache-overflow on each accelerator:
+  Coral: cache-fit 1.226ms vs overflow 14.854ms (12.1x)
+  NPU: cache-fit 4.803ms vs overflow 6.051ms (1.3x)
+  GPU: cache-fit 2.284ms vs overflow 2.898ms (1.3x)
+
+Fastest accelerator per model (of the three):
+  Coral fastest on 679/987 models (69%)
+  NPU fastest on 0/987 models (0%)
+  GPU fastest on 308/987 models (31%)

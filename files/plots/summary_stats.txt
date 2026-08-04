@@ -1,0 +1,17 @@
+NAS-Bench-101 Edge TPU latency study — summary
+==================================================
+
+Total models timed: 1000
+  Cache-fit:     653
+  Cache-overflow: 347
+
+Cache-fit latency (ms): median=1.227  mean=1.232  min=0.390  max=2.001
+Cache-overflow latency (ms): median=14.888  mean=22.257  min=1.667  max=76.737
+All latency (ms): median=1.474  mean=8.528  min=0.390  max=76.737
+
+Overflow/fit median ratio: 12.1x
+
+Correlation latency~params:
+  within cache-fit:     0.842
+  within cache-overflow: 1.000
+  overall:              0.969
